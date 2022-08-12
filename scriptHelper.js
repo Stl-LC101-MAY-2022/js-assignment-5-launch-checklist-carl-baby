@@ -1,4 +1,5 @@
 // Write your helper functions here!
+// Write your helper functions here!
 require('isomorphic-fetch');
 
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
@@ -17,6 +18,7 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
 };
 
 function validateInput(testInput) {
+    console.log(testInput, "validateInput");
     if (testInput === "" || testInput === null || testInput === 0) {
         return 'Empty'
     } else if ((!isNaN(Number(testInput)))) {
@@ -27,39 +29,44 @@ function validateInput(testInput) {
 };
 
 
-function formSubmission(document, list, pilot, copilot, fuelLevel, cargoStatus) {
+function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
     let pilotStatus = document.getElementById('pilotStatus');
+    console.log(pilotStatus);
     let copilotStatus = document.getElementById('copilotStatus');
     let fuelStatus = document.getElementById('fuelStatus');
     let launchStatus = document.getElementById('launchStatus');
     let cargoStatus = document.getElementById('cargoStatus');
+    console.log(validateInput(pilotStatus), pilotStatus);
     //check all fields are filled
-    if (validateInput(pilotStatus) === "" || validateInput(copilotStatus) === ""|| 
-    validateInput(fuelLevel) === ""||validateInput(cargoLevel) === "") {
+    if ( validateInput(pilot.value)=== 'Empty' || validateInput(copilot.value) === 'Empty'|| 
+    validateInput(fuelLevel.value) === 'Empty' ||validateInput(cargoLevel.value) === 'Empty') {
         window.alert("All fields are required!");
-}     else if (validateInput(fuelLevel) === NaN || validateInput(cargoLevel) === NaN) {
+        return;
+}     else if (validateInput(fuelLevel.value) === 'Not a Number' || validateInput(cargoLevel.value) === 'Not a Number') {
     window.alert("Please enter a NUMBER for Fuel Level and Cargo Mass");
-} else if (validateInput(pilotStatus)!== NaN ||validateInput(copilotStatus)!== NaN ) {
+    return;
+    } else if (validateInput(pilot.value)=== 'Is a Number' ||validateInput(copilot.value)=== 'Is a Number' ) {
     window.alert("Please enter a NAME for pilot or co-pilot");
+    return;
 } 
 else {
-pilotStatus.innerHTML = `Pilot ${pilot} is ready`;
-copilotStatus.innerHTML = `Co-pilot ${copilot} is ready`;
 list.style.visibility = 'hidden';
+pilotStatus.innerHTML = `Pilot ${pilot.value} is ready`;
+copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready`;
 };
 
 //check fuel levels and update faulty items
-if (Number(fuelLevel) < 10000) {
+if (fuelLevel.value < 10000) {
     fuelStatus.innerHTML = `Not enough fuel for journey`;
     list.style.visibility = 'visible';
     launchStatus.innerHTML = `Shuttle not ready for launch`;
     launchStatus.style.color = `red`;
-} else if (Number(cargoLevel) > 10000) {
+} else if (cargoLevel.value > 10000) {
     cargoStatus.innerHTML = `Cargo too heavy for takeoff`;
     list.style.visibility = `visible`;
     launchStatus.innerHTML = `Shuttle not ready for launch`;
     launchStatus.style.color = `red`;
-} else if (Number(cargoLevel) < 10000 && Number(fuelLevel) > 10000) {
+} else if (cargoLevel.value < 10000 && fuelLevel.value > 10000) {
     list.style.visibility = `visible`;
     fuelStatus.innerHTML = `Enough fuel for journey`;
     cargoStatus.innerHTML = `Cargo light enough for takeoff`;
@@ -68,19 +75,14 @@ if (Number(fuelLevel) < 10000) {
 }
 };
 
+//should work 
 async function myFetch() {
-let planetsReturned;
-    planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
-let listedPlanetsResponse = response.json();
-listedPlanetsResponse.then(function (result) {
-    listedPlanets = result;
-    console.log(listedPlanets);
-}).then(function () {
-    console.log(listedPlanets);
-    // Below this comment call the appropriate helper functions to pick a planet fom the list of planets and add that information to your destination.
-})
-    }
-    )};
+    let planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
+    return response.json();
+    })
+     return planetsReturned;
+    };
+
 
 function pickPlanet(planets) {
     let planetIndex = Math.floor(Math.random() * planets.length);
